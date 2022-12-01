@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 
 export const signin = async (req, res, next) => {
   try {
-  
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) return next(createError(404, "User not found"));
@@ -15,7 +14,9 @@ export const signin = async (req, res, next) => {
     if (!isCorrect) return next(createError(400, "Invalid Credentials"));
 
     //creating access token
-    const token = jwt.sign({ id: user._id }, process.env.JWT);
+    const token = jwt.sign({ id: user._id }, process.env.JWT, {
+      expiresIn: "1h",
+    });
 
     const { password, ...userDetails } = user._doc;
 
@@ -33,7 +34,6 @@ export const signin = async (req, res, next) => {
 
 export const signup = async (req, res, next) => {
   try {
-  
     const user = await User.findOne({ email: req.body.email });
 
     if (user) return next(createError(403, "User Exist "));
@@ -49,7 +49,6 @@ export const signup = async (req, res, next) => {
     await newUser.save();
 
     return res.status(200).send("User has been created");
-
   } catch (error) {
     next(error);
   }

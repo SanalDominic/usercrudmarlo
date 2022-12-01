@@ -22,6 +22,7 @@ export const editUser = async (req, res, next) => {
     const user = await User.findById(req.params.id);
     if (!user) return next(createError(404, "User not found"));
     if (req.user.id == user._id) {
+      
       const hash = await bcrypt.hash(req.body.password, 10);
       const updateUser = await User.findByIdAndUpdate(
         req.params.id,
